@@ -2,6 +2,8 @@ function checkStringLength(string, maxLength) {
   return string.length <= maxLength;
 }
 
+checkStringLength();
+
 function isPalindrome(string) {
   const normalizedString = string.replaceAll(' ', '').toLowerCase();
   let reversedString = '';
@@ -10,6 +12,8 @@ function isPalindrome(string) {
   }
   return reversedString === normalizedString;
 }
+
+isPalindrome('топот');
 
 function detachNumbers(string) {
   string = string.toString();
@@ -21,3 +25,5 @@ function detachNumbers(string) {
   }
   return parseInt(number, 10);
 }
+
+detachNumbers();
