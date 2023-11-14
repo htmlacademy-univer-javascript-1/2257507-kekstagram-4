@@ -15,7 +15,7 @@ function createRandomId (a, b) {
   return function () {
     let currentValue = getRandomInteger(a, b);
     if (previousValues.length >= (b - a + 1)) {
-      return null;
+      return currentValue;
     }
     while (previousValues.includes(currentValue)) {
       currentValue = getRandomInteger(a, b);
