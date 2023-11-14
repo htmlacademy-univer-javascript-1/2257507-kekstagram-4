@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
-import { createData } from './data.js';
+import { createPreviews } from './pictures.js';
 
-console.log(createData());
+createPreviews();
