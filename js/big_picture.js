@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 const COUNT_STEP = 5;
 let commentsNumber = 0;
 let currentComments = 0;
