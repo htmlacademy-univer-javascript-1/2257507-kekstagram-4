@@ -1,5 +1,3 @@
-const ALERT_SHOW_TIME = 5000;
-
 function getRandomInteger (a, b) {
   const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
   const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
@@ -27,74 +25,58 @@ function createRandomId (a, b) {
   };
 }
 
-const isEscapeKey = (evt) => evt.key === 'Escape';
+function sortByComments (photoA, photoB) {
+  const rankPhotoA = photoA.comments.length;
+  const rankPhotoB = photoB.comments.length;
 
-const body = document.querySelector('body');
-const successTemplate = document.querySelector('#success').content.querySelector('.success');
-const successBtn = successTemplate.querySelector('.success__button');
-const errorTemplate = document.querySelector('#error').content.querySelector('.error');
-const errorBtn = errorTemplate.querySelector('.error__button');
-
-const closeMessage = (evt) => {
-  if (isEscapeKey(evt) || evt.target === successBtn || evt.target === successTemplate){
-    successBtn.removeEventListener('click', onCloseBtnClick);
-    document.removeEventListener('keydown', onDocumentKeydown);
-    body.removeChild(body.lastChild);
-  } else if (evt.target === errorTemplate || evt.target === errorTemplate || isEscapeKey(evt)) {
-    errorBtn.removeEventListener('click', onCloseBtnClick);
-    document.removeEventListener('keydown', onDocumentKeydown);
-    body.removeChild(body.lastChild);
-  }
-};
-
-function onCloseBtnClick(evt) {
-  closeMessage(evt);
+  return rankPhotoB - rankPhotoA;
 }
 
-function onDocumentClick(evt) {
-  closeMessage(evt);
+function sortRandom () {
+  return Math.random() - 0.5;
 }
 
-function onDocumentKeydown(evt) {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    closeMessage(evt);
-  }
+function isEscapeKey (evt) {
+  return evt.key === 'Escape';
 }
 
-const showSuccess = () => {
-  body.appendChild(successTemplate);
-  successBtn.addEventListener('click', onCloseBtnClick);
-  document.addEventListener('keydown', onDocumentKeydown);
-  document.addEventListener('click', onDocumentClick);
-};
+function debounce (callback, timeoutDelay = 500) {
+  // Используем замыкания, чтобы id таймаута у нас навсегда приклеился
+  // к возвращаемой функции с setTimeout, тогда мы его сможем перезаписывать
+  let timeoutId;
 
-const showError = () => {
-  body.appendChild(errorTemplate);
-  errorBtn.addEventListener('click', onCloseBtnClick);
-  document.addEventListener('keydown', onDocumentKeydown);
-  document.addEventListener('click', onDocumentClick);
-};
+  return (...rest) => {
+    // Перед каждым новым вызовом удаляем предыдущий таймаут,
+    // чтобы они не накапливались
+    clearTimeout(timeoutId);
 
-const showAlert = (message) => {
-  const alertContainer = document.createElement('div');
-  alertContainer.style.zIndex = '100';
-  alertContainer.style.position = 'absolute';
-  alertContainer.style.left = '0';
-  alertContainer.style.top = '0';
-  alertContainer.style.right = '0';
-  alertContainer.style.padding = '10px 3px';
-  alertContainer.style.fontSize = '30px';
-  alertContainer.style.textAlign = 'center';
-  alertContainer.style.backgroundColor = 'red';
+    // Затем устанавливаем новый таймаут с вызовом колбэка на ту же задержку
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
 
-  alertContainer.textContent = message;
+    // Таким образом цикл «поставить таймаут - удалить таймаут» будет выполняться,
+    // пока действие совершается чаще, чем переданная задержка timeoutDelay
+  };
+}
 
-  document.body.append(alertContainer);
+function throttle (callback, delayBetweenFrames) {
+  // Используем замыкания, чтобы время "последнего кадра" навсегда приклеилось
+  // к возвращаемой функции с условием, тогда мы его сможем перезаписывать
+  let lastTime = 0;
 
-  setTimeout(() => {
-    alertContainer.remove();
-  }, ALERT_SHOW_TIME);
-};
+  return (...rest) => {
+    // Получаем текущую дату в миллисекундах,
+    // чтобы можно было в дальнейшем
+    // вычислять разницу между кадрами
+    const now = new Date();
 
-export {getRandomInteger, getRandomArrayElement, createRandomId, isEscapeKey, showError, showSuccess, showAlert};
+    // Если время между кадрами больше задержки,
+    // вызываем наш колбэк и перезаписываем lastTime
+    // временем "последнего кадра"
+    if (now - lastTime >= delayBetweenFrames) {
+      callback.apply(this, rest);
+      lastTime = now;
+    }
+  };
+}
+
+export {getRandomInteger, getRandomArrayElement, createRandomId, isEscapeKey, sortByComments, sortRandom, debounce, throttle};
