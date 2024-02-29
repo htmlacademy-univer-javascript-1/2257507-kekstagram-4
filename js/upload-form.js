@@ -2,6 +2,7 @@ import { sendData } from './api.js';
 import { isEscapeKey } from './utils.js';
 import { showError, showSuccess } from './alerts.js';
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const PICTURE_SCALE_STEP = 25;
 const PICTURE_SCALE_RATIO = 0.01;
 const PictureScaleValue = {
@@ -72,6 +73,7 @@ const sliderForEffect = uploadOverlay.querySelector('.effect-level__slider');
 const effectContainer = uploadOverlay.querySelector('.effects__list');
 const effectLevel = uploadOverlay.querySelector('.img-upload__effect-level');
 const effectlevelValue =  effectLevel.querySelector('.effect-level__value');
+const effectItems = uploadOverlay.querySelectorAll('.effects__preview');
 
 function isValidHashtag () {
   const hashtags = textHashtag.value.split(' ');
@@ -156,6 +158,12 @@ const openUploadForm = () => {
   scaleBtnSmaller.addEventListener('click', onPictureScaleBiggerBtnClick);
   effectContainer.addEventListener('change', onEffectContainerChange);
 
+  const file = URL.createObjectURL(uploadInput.files[0]);
+  picture.src = file;
+  effectItems.forEach((item) => {
+    item.style.backgroundImage = `url("${file}")`;
+  });
+
   picture.style.scale = 1;
   scaleControlValue.value = '100%';
   picture.style.filter = 'none';
@@ -178,6 +186,11 @@ const closeUploadForm = () => {
   scaleBtnBigger.removeEventListener('click', onPictureScaleSmallerBtnClick);
   scaleBtnSmaller.removeEventListener('click', onPictureScaleBiggerBtnClick);
   effectContainer.removeEventListener('change', onEffectContainerChange);
+
+  picture.src = '';
+  effectItems.forEach((item) => {
+    item.style.backgroundImage = 'none';
+  });
 
   uploadInput.value = '';
   textDescription.value = '';
@@ -285,7 +298,16 @@ function onDocumentEscKeyDown (evt) {
 }
 
 function uploadImg () {
-  uploadInput.addEventListener('change', openUploadForm);
+  uploadInput.addEventListener('change', () => {
+    const file = uploadInput.files[0];
+    const fileName = file.name.toLowerCase();
+
+    const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+    if (matches) {
+      openUploadForm();
+    }
+  });
 }
 
 const sendForm = () => {
