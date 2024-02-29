@@ -1,3 +1,6 @@
+import { sendData } from './api.js';
+import { isEscapeKey, showError, showSuccess } from './utils.js';
+
 const PICTURE_SCALE_STEP = 25;
 const PICTURE_SCALE_RATIO = 0.01;
 const PictureScaleValue = {
@@ -58,6 +61,7 @@ const closeButton = document.querySelector('.img-upload__cancel');
 const uploadForm = document.querySelector('.img-upload__form');
 const textHashtag = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
+const submitBtn = uploadOverlay.querySelector('.img-upload__submit');
 
 const scaleBtnSmaller = uploadOverlay.querySelector('.scale__control--smaller');
 const scaleBtnBigger = uploadOverlay.querySelector('.scale__control--bigger');
@@ -127,7 +131,7 @@ const createEffectSlider = () => {
 function onInputEscKeyDown (evt) {
   const active = document.activeElement;
   const isInput = active.tagName === 'INPUT' || active.tagName === 'TEXTAREA';
-  if (evt.key === 'Escape' && isInput) {
+  if (isEscapeKey(evt) && isInput) {
     evt.stopPropagation();
     active.blur();
   }
@@ -273,7 +277,7 @@ function onCloseButtonClick () {
 }
 
 function onDocumentEscKeyDown (evt) {
-  if(evt.key === 'Escape') {
+  if(isEscapeKey(evt)) {
     evt.preventDefault();
     closeUploadForm();
   }
@@ -283,4 +287,19 @@ function uploadImg () {
   uploadInput.addEventListener('change', openUploadForm);
 }
 
-export {uploadImg};
+const sendForm = () => {
+  uploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    submitBtn.disabled = true;
+    const formData = new FormData(evt.target);
+    sendData(formData)
+      .then(() => showSuccess())
+      .catch((err) => showError(err.message))
+      .finally(() => {
+        submitBtn.disabled = false;
+        closeUploadForm();
+      });
+  });
+};
+
+export {uploadImg, sendForm};
