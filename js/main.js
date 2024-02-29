@@ -1,6 +1,12 @@
-import { createData } from './data.js';
 import { renderThumbnails } from './thumbnail.js';
-import { uploadImg } from './upload-form.js';
+import { sendForm, uploadImg } from './upload-form.js';
+import { getData } from './api.js';
+import { showAlert } from './utils.js';
 
-renderThumbnails(createData());
 uploadImg();
+getData()
+  .then((pictures) => renderThumbnails(pictures))
+  .catch((err) => showAlert(err.message));
+
+sendForm();
+
