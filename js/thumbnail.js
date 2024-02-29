@@ -24,6 +24,7 @@ const renderThumbnails = (pictures) => {
     fragment.append(thumbnail);
   });
 
+  document.querySelectorAll('.picture').forEach((picture) => container.removeChild(picture));
   container.append(fragment);
 };
 

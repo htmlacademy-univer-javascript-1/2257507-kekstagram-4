@@ -1,5 +1,6 @@
 import { sendData } from './api.js';
-import { isEscapeKey, showError, showSuccess } from './utils.js';
+import { isEscapeKey } from './utils.js';
+import { showError, showSuccess } from './alerts.js';
 
 const PICTURE_SCALE_STEP = 25;
 const PICTURE_SCALE_RATIO = 0.01;
